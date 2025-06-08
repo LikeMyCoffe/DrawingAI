@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Aplicație de desen modernă</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h1>🎨 Aplicație de desen <span class="year">2025</span></h1>
+    <div class="toolbar">
+        <div class="color-picker-group">
+            <label for="culoare">Culoare:</label>
+            <input type="color" id="culoare" value="#4f8cff">
+            <div class="preset-colors">
+                <button class="preset" style="background:#4f8cff" data-color="#4f8cff"></button>
+                <button class="preset" style="background:#ff4f81" data-color="#ff4f81"></button>
+                <button class="preset" style="background:#ffd24f" data-color="#ffd24f"></button>
+                <button class="preset" style="background:#4fff8c" data-color="#4fff8c"></button>
+                <button class="preset" style="background:#333333" data-color="#333333"></button>
+                <button class="preset" style="background:#ffffff; border:1px solid #ccc;" data-color="#ffffff"></button>
+            </div>
+        </div>
+        <div class="slider-group">
+            <label for="grosime">Grosime:</label>
+            <input type="range" id="grosime" min="1" max="30" value="5">
+            <span id="grosime-val">5</span> px
+        </div>
+        <button id="clear-btn" class="fancy-btn">🧹 Șterge tot</button>
+        <button id="save-btn" class="fancy-btn">💾 Salvează</button>
+    </div>
+    <div class="canvas-wrapper">
+        <canvas id="canvas" width="800" height="500"></canvas>
+    </div>
+    <footer>
+        <span>Creat cu ❤️ în 2025</span>
+    </footer>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
