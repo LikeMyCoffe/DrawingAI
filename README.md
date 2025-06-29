@@ -21,11 +21,17 @@ Această aplicație web permite utilizatorilor să deseneze liber pe un canvas, 
 
 ## Structura proiectului
 
-
-- `index.html` – Structura paginii web
-- `style.css` – Stilizare modernă și responsive
-- `script.js` – Funcționalitate interactivă (desen, încărcare imagine, undo/redo etc.)
+- `src/`
+  - `index.html` – Structura paginii web și interfața principală
+  - `style.css` – Stilizare modernă și responsive pentru aplicație
+  - `script.js` – Funcționalitate interactivă (desen, încărcare imagine, undo/redo etc.)
+  - `server.js` – Server Express pentru integrarea AI (API backend)
+- `server.js` – (la rădăcina proiectului) – Server Express alternativ sau legacy
+- `package.json` – Configurație proiect Node.js și dependențe
 - `README.md` – Documentație proiect (acest fișier)
+- `.env` – Chei și variabile de mediu (nu se include în repo)
+- `node_modules/` – Dependențe Node.js (generat automat)
+- `.gitignore`, `.idea/`, `proiect-desen.iml` – Fișiere de configurare și meta-informații
 
 ---
 
@@ -71,7 +77,7 @@ Această aplicație web permite utilizatorilor să deseneze liber pe un canvas, 
 
 ## Autori
 
-- Gherghina Ana-Maria, Sima Maria, Arghir Teodora
+- Enache Eduard-Florentin
 - Master Comunicații Mobile, Grupa 411-CMob
 
 ---
