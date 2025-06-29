@@ -113,10 +113,16 @@ input[type="range"] {
     transition: background 0.2s, transform 0.1s;
     margin-left: 8px;
     outline: none;
+    display: inline-block;
+    text-align: center;
 }
 .fancy-btn:hover, .fancy-btn:focus {
     background: linear-gradient(90deg, #ff4f81 60%, #4f8cff 100%);
     transform: translateY(-2px) scale(1.05);
+}
+
+input[type="file"] {
+    display: none;
 }
 
 .canvas-wrapper {
@@ -144,6 +150,78 @@ footer {
     font-size: 1rem;
     margin-top: 10px;
     opacity: 0.8;
+}
+
+.chat-container {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 320px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  padding: 16px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-log {
+  height: 180px;
+  overflow-y: auto;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+#chat-input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#send-chat {
+  padding: 6px 16px;
+  border-radius: 6px;
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.api-key-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+#api-key-input {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#save-api-key {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #2ecc40;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 @media (max-width: 900px) {

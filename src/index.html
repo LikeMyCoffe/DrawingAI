@@ -26,14 +26,25 @@
             <input type="range" id="grosime" min="1" max="30" value="5">
             <span id="grosime-val">5</span> px
         </div>
+        <label class="fancy-btn" for="upload-img">🖼️ Încarcă imagine</label>
+        <input type="file" id="upload-img" accept="image/*" style="display:none;">
+        <button id="undo-btn" class="fancy-btn">↩️ Undo</button>
+        <button id="redo-btn" class="fancy-btn">↪️ Redo</button>
         <button id="clear-btn" class="fancy-btn">🧹 Șterge tot</button>
         <button id="save-btn" class="fancy-btn">💾 Salvează</button>
     </div>
     <div class="canvas-wrapper">
         <canvas id="canvas" width="800" height="500"></canvas>
     </div>
+    <div class="chat-container">
+      <div id="chat-log" class="chat-log"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Ask the AI to draw something..." />
+        <button id="send-chat">Send</button>
+      </div>
+    </div>
     <footer>
-        <span>Creat cu ❤️ în 2025</span>
+        <span>Creat de Eduard Enache</span>
     </footer>
 </div>
 <script src="script.js"></script>

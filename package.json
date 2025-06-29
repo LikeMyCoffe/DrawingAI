@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "openai": "^5.2.0"
+  },
+  "name": "proiect-desen",
+  "version": "1.0.0",
+  "description": "Această aplicație web permite utilizatorilor să deseneze liber pe un canvas, să aleagă culoarea și grosimea liniei, să încarce imagini peste care pot desena, să șteargă, să salveze sau să revină la pași anteriori ai desenului (Undo/Redo). Interfața este modernă, responsive și intuitivă, compatibilă atât cu desktop cât și cu dispozitive mobile.",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
