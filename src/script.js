@@ -1,3 +1,4 @@
+// --- Drawing App Core (unchanged) ---
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const colorPicker = document.getElementById('culoare');
@@ -10,12 +11,12 @@ const uploadImgInput = document.getElementById('upload-img');
 
 let undoStack = [];
 let redoStack = [];
-const maxHistory = 20; // Poți schimba limita de pași rețurnati
+const maxHistory = 20;
 let drawing = false;
 let currentColor = colorPicker.value;
 let currentLineWidth = grosimeSlider.value;
 
-// Actualizează culoarea la schimbare
+// Color picker
 colorPicker.addEventListener('input', (e) => {
     currentColor = e.target.value;
 });
@@ -28,13 +29,13 @@ presetBtns.forEach(btn => {
     });
 });
 
-// Actualizează grosimea liniei
+// Line width
 grosimeSlider.addEventListener('input', (e) => {
     currentLineWidth = e.target.value;
     grosimeVal.textContent = currentLineWidth;
 });
 
-// Evenimente desenare
+// Drawing events
 canvas.addEventListener('mousedown', (e) => {
     drawing = true;
     saveState(undoStack);
@@ -51,7 +52,6 @@ canvas.addEventListener('mouseleave', () => {
 });
 canvas.addEventListener('mousemove', draw);
 
-// Salvare progress Undo/Redo
 function saveState(stack, keepRedo = false) {
     if (!keepRedo) {
         redoStack = [];
@@ -62,8 +62,6 @@ function saveState(stack, keepRedo = false) {
     }
 }
 
-
-// Funcție desenare
 function draw(e) {
     if (!drawing) return;
     ctx.lineWidth = currentLineWidth;
@@ -76,7 +74,7 @@ function draw(e) {
     ctx.moveTo(getX(e), getY(e));
 }
 
-// Pentru touch (mobil)
+// Touch events
 canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
     drawing = true;
@@ -102,13 +100,13 @@ canvas.addEventListener('touchmove', (e) => {
     ctx.moveTo(getTouchX(touch), getTouchY(touch));
 });
 
-// Șterge canvas
+// Clear canvas
 clearBtn.addEventListener('click', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     saveState(undoStack);
 });
 
-// Salvează desenul ca imagine
+// Save as image
 saveBtn.addEventListener('click', () => {
     const link = document.createElement('a');
     link.download = 'desen_canvas.png';
@@ -116,7 +114,7 @@ saveBtn.addEventListener('click', () => {
     link.click();
 });
 
-// Încărcare imagine pe canvas
+// Upload image
 uploadImgInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -125,13 +123,11 @@ uploadImgInput.addEventListener('change', function(e) {
     reader.onload = function(event) {
         const img = new window.Image();
         img.onload = function() {
-            // Redimensionează imaginea să se potrivească pe canvas
             let drawWidth = canvas.width;
             let drawHeight = canvas.height;
             let ratio = Math.min(canvas.width / img.width, canvas.height / img.height);
             drawWidth = img.width * ratio;
             drawHeight = img.height * ratio;
-            // Poziționează imaginea central pe canvas
             const offsetX = (canvas.width - drawWidth) / 2;
             const offsetY = (canvas.height - drawHeight) / 2;
             ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
@@ -140,11 +136,10 @@ uploadImgInput.addEventListener('change', function(e) {
         img.src = event.target.result;
     };
     reader.readAsDataURL(file);
-    // Reset input pentru a putea încărca aceeași imagine de mai multe ori
     e.target.value = '';
 });
 
-// Funcții ajutătoare pentru coordonate
+// Coordinate helpers
 function getX(e) {
     const rect = canvas.getBoundingClientRect();
     return e.clientX - rect.left;
@@ -162,7 +157,6 @@ function getTouchY(touch) {
     return touch.clientY - rect.top;
 }
 
-// Inițializare valoare grosime
 grosimeVal.textContent = grosimeSlider.value;
 
 function restoreState(stackFrom, stackTo) {
@@ -185,95 +179,80 @@ document.getElementById('redo-btn').addEventListener('click', function() {
     restoreState(redoStack, undoStack);
 });
 
-// Salvează starea goală la început
+// Save initial empty state
 saveState(undoStack);
-// === AI Drawing Integration ===
-const geminiApiKey = 'AIzaSyCczkMxTf63wD5pKQfylNC390PTeO0TRHk';
+
+// === AI Drawing Integration (Animated Freehand) ===
 const chatLog = document.getElementById('chat-log');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
 
+// Change this URL if you deploy your backend!
+const BACKEND_URL = 'http://localhost:3000/api/generate';
+
 async function generateDrawing(prompt) {
-    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + geminiApiKey;
-    
-    const systemPrompt = `Draw the user's request using these shapes on an 800x500 canvas:
-- Rectangle: {"action":"draw_rectangle", "x":number, "y":number, "width":number, "height":number, "color":"#hex", "fill":boolean}
-- Circle: {"action":"draw_circle", "x":number, "y":number, "radius":number, "color":"#hex", "fill":boolean}
-- Line: {"action":"draw_line", "x1":number, "y1":number, "x2":number, "y2":number, "color":"#hex"}
-
-Respond with:
-1. One line saying what you'll draw
-2. A JSON array with the shapes
-
-Example:
-I'll draw a house!
-[{"action":"draw_rectangle","x":350,"y":250,"width":100,"height":100,"color":"#000000","fill":true}]`;
-
     try {
-        const response = await fetch(url, {
+        const response = await fetch(BACKEND_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: `${systemPrompt}\n\nRequest: ${prompt}` }]
-                }]
-            })
+            body: JSON.stringify({ prompt })
         });
-
         const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (!text) {
-            throw new Error('No response received');
-        }
-
-        const [message, ...rest] = text.split('\n').filter(Boolean);
-        const jsonText = rest.join('\n');
-
-        try {
-            const instructions = JSON.parse(jsonText);
-            return { message, instructions };
-        } catch (e) {
-            console.error('Failed to parse instructions:', e);
-            throw new Error('Invalid drawing format received');
-        }
+        if (data.error) throw new Error(data.error);
+        return { message: data.message, commands: data.commands };
     } catch (error) {
         console.error('AI error:', error);
         throw error;
     }
 }
 
-function drawShapes(instructions) {
-    if (!Array.isArray(instructions)) return;
-    
+// Animate a list of drawing commands step by step
+function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 3, delay = 200) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    instructions.forEach(shape => {
-        ctx.beginPath();
-        ctx.strokeStyle = shape.color || '#000000';
-        ctx.fillStyle = shape.color || '#000000';
-        
-        switch (shape.action) {
-            case 'draw_rectangle':
-                ctx.rect(shape.x, shape.y, shape.width, shape.height);
-                break;
-            case 'draw_circle':
-                ctx.arc(shape.x, shape.y, shape.radius, 0, Math.PI * 2);
-                break;
-            case 'draw_line':
-                ctx.moveTo(shape.x1, shape.y1);
-                ctx.lineTo(shape.x2, shape.y2);
-                break;
-        }
-        
-        if (shape.fill) {
+    ctx.strokeStyle = defaultColor;
+    ctx.lineWidth = lineWidth;
+    let i = 0;
+    let currentStroke = defaultColor;
+    let currentFill = null;
+
+    function next() {
+        if (i >= commands.length) return;
+        const cmd = commands[i].trim();
+
+        if (cmd.startsWith('setStrokeStyle')) {
+            const color = cmd.match(/"(#\w{6})"/) || cmd.match(/(#\w{6})/);
+            if (color) {
+                ctx.strokeStyle = color[1];
+                currentStroke = color[1];
+            }
+        } else if (cmd.startsWith('setFillStyle')) {
+            const color = cmd.match(/"(#\w{6})"/) || cmd.match(/(#\w{6})/);
+            if (color) {
+                ctx.fillStyle = color[1];
+                currentFill = color[1];
+            }
+        } else if (cmd.startsWith('beginPath')) {
+            ctx.beginPath();
+        } else if (cmd.startsWith('moveTo')) {
+            const [x, y] = cmd.match(/\d+/g).map(Number);
+            ctx.moveTo(x, y);
+        } else if (cmd.startsWith('lineTo')) {
+            const [x, y] = cmd.match(/\d+/g).map(Number);
+            ctx.lineTo(x, y);
+        } else if (cmd.startsWith('closePath')) {
+            ctx.closePath();
+        } else if (cmd.startsWith('fill')) {
             ctx.fill();
+        } else if (cmd.startsWith('stroke')) {
+            ctx.stroke();
         }
-        ctx.stroke();
-    });
-    
-    saveState(undoStack);
+
+        i++;
+        setTimeout(next, delay);
+    }
+    next();
 }
+
 
 chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
@@ -285,16 +264,16 @@ chatInput.addEventListener('keypress', (e) => {
 sendChatBtn.addEventListener('click', async () => {
     const prompt = chatInput.value.trim();
     if (!prompt) return;
-    
+
     appendChatMessage('You', prompt);
     chatInput.value = '';
     const loadingMsg = appendChatMessage('AI', '<i>Drawing...</i>');
-    
+
     try {
         const result = await generateDrawing(prompt);
         loadingMsg.innerHTML = `<b>AI:</b> ${result.message}`;
-        if (result.instructions) {
-            drawShapes(result.instructions);
+        if (result.commands) {
+            animateDrawingCommands(result.commands, currentColor, currentLineWidth, 150);
         }
     } catch (error) {
         loadingMsg.innerHTML = `<b>AI:</b> <span style="color: red">${error.message}</span>`;
@@ -309,4 +288,3 @@ function appendChatMessage(sender, message) {
     chatLog.scrollTop = chatLog.scrollHeight;
     return msgDiv;
 }
-
