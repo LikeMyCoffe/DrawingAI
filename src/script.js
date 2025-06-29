@@ -1,4 +1,5 @@
 // --- Drawing App Core (unchanged) ---
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const colorPicker = document.getElementById('culoare');
@@ -188,7 +189,7 @@ const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
 
 // Change this URL if you deploy your backend!
-const BACKEND_URL = 'http://localhost:3000/api/generate';
+const BACKEND_URL = '/api/generate';
 
 async function generateDrawing(prompt) {
     try {
