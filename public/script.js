@@ -185,6 +185,7 @@ saveState(undoStack);
 
 // === AI Drawing Integration (Animated Freehand) ===
 const chatLog = document.getElementById('chat-log');
+appendChatMessage('AI', 'Welcome to DrawingAI! Ask me to draw anything and watch the magic happen.');
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
 
@@ -289,3 +290,5 @@ function appendChatMessage(sender, message) {
     chatLog.scrollTop = chatLog.scrollHeight;
     return msgDiv;
 }
+
+
