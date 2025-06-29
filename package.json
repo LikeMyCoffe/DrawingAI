@@ -4,7 +4,7 @@
   "description": "Această aplicație web permite utilizatorilor să deseneze liber pe un canvas, să aleagă culoarea și grosimea liniei, să încarce imagini peste care pot desena, să șteargă, să salveze sau să revină la pași anteriori ai desenului (Undo/Redo). Interfața este modernă, responsive și intuitivă, compatibilă atât cu desktop cât și cu dispozitive mobile.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
