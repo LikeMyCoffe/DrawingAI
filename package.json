@@ -1,28 +1,28 @@
 {
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^17.0.0",
-    "express": "^5.1.0",
-    "node-fetch": "^2.7.0",
-    "openai": "^5.2.0"
-  },
   "name": "proiect-desen",
   "version": "1.0.0",
   "description": "Această aplicație web permite utilizatorilor să deseneze liber pe un canvas, să aleagă culoarea și grosimea liniei, să încarce imagini peste care pot desena, să șteargă, să salveze sau să revină la pași anteriori ai desenului (Undo/Redo). Interfața este modernă, responsive și intuitivă, compatibilă atât cu desktop cât și cu dispozitive mobile.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "node-fetch": "^2.7.0"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LikeMyCoffe/AI-Drawing.git"
+    "url": "git+https://github.com/LikeMyCoffe/proiect-desen.git"
   },
   "bugs": {
-    "url": "https://github.com/LikeMyCoffe/AI-Drawing/issues"
+    "url": "https://github.com/LikeMyCoffe/proiect-desen/issues"
   },
-  "homepage": "https://github.com/LikeMyCoffe/AI-Drawing#readme"
+  "homepage": "https://github.com/LikeMyCoffe/proiect-desen#readme"
 }
