@@ -2,9 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+
+const app = express(); // <-- Define app BEFORE using it!
+const PORT = process.env.PORT || 3000;
+
+// Serve static files from the src directory
 app.use(express.static(path.join(__dirname, 'src')));
-const app = express();
-const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -73,7 +76,6 @@ Now, draw the following as described by the user:
 ${prompt}
 `;
 
-
   try {
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
@@ -105,6 +107,11 @@ ${prompt}
   } catch (err) {
     res.status(500).json({ error: 'Server error: ' + err.message });
   }
+});
+
+// Fallback: serve index.html for any unknown route (for SPA support)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
 app.listen(PORT, () => {
