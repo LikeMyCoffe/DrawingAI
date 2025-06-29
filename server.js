@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const app = express(); // <-- Define app BEFORE using it!
+const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Serve static files from the src directory
