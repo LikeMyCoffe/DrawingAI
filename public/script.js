@@ -252,6 +252,20 @@ function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 
             ctx.fill();
         } else if (cmd.startsWith('stroke')) {
             ctx.stroke();
+        } else if (cmd.startsWith('ellipse')) {
+          // ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle)
+            const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
+            if (nums.length === 7) ctx.ellipse(...nums);
+        }
+          else if (cmd.startsWith('quadraticCurveTo')) {
+          // quadraticCurveTo(cpx, cpy, x, y)
+            const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
+            if (nums.length === 4) ctx.quadraticCurveTo(...nums);
+        }
+          else if (cmd.startsWith('arc')) {
+            const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
+            if (nums.length === 5) ctx.arc(nums[0], nums[1], nums[2], nums[3], nums[4]);
+            else if (nums.length === 6) ctx.arc(nums[0], nums[1], nums[2], nums[3], nums[4], !!nums[5]);
         }
 
         i++;
