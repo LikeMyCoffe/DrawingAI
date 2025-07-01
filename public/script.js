@@ -294,5 +294,3 @@ function appendChatMessage(sender, message) {
     chatLog.scrollTop = chatLog.scrollHeight;
     return msgDiv;
 }
-
-
