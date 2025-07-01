@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const errorHandler = require('./utils/errorHandler');
+const { logInfo } = require('./utils/logger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +23,9 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
+// Error handling middleware (should be last)
+app.use(errorHandler);
+
 app.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
+  logInfo(`Backend server running on http://localhost:${PORT}`);
 });

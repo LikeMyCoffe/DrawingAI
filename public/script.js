@@ -209,13 +209,12 @@ async function generateDrawing(prompt) {
 }
 
 // Animate a list of drawing commands step by step
-function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 3, delay = 200) {
+function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 5, delay = 5) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = defaultColor;
     ctx.lineWidth = lineWidth;
+    ctx.globalAlpha = 1.0;
     let i = 0;
-    let currentStroke = defaultColor;
-    let currentFill = null;
 
     function next() {
         if (i >= commands.length) return;
@@ -223,24 +222,30 @@ function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 
 
         if (cmd.startsWith('setStrokeStyle')) {
             const color = cmd.match(/"(#\w{6})"/) || cmd.match(/(#\w{6})/);
-            if (color) {
-                ctx.strokeStyle = color[1];
-                currentStroke = color[1];
-            }
+            if (color) ctx.strokeStyle = color[1];
         } else if (cmd.startsWith('setFillStyle')) {
             const color = cmd.match(/"(#\w{6})"/) || cmd.match(/(#\w{6})/);
-            if (color) {
-                ctx.fillStyle = color[1];
-                currentFill = color[1];
-            }
+            if (color) ctx.fillStyle = color[1];
+        } else if (cmd.startsWith('setLineWidth')) {
+            const width = cmd.match(/\d+/);
+            if (width) ctx.lineWidth = parseInt(width[0]);
+        } else if (cmd.startsWith('setGlobalAlpha')) {
+            const alpha = cmd.match(/([01](\.\d+)?)/);
+            if (alpha) ctx.globalAlpha = parseFloat(alpha[1]);
         } else if (cmd.startsWith('beginPath')) {
             ctx.beginPath();
         } else if (cmd.startsWith('moveTo')) {
-            const [x, y] = cmd.match(/\d+/g).map(Number);
+            const [x, y] = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
             ctx.moveTo(x, y);
         } else if (cmd.startsWith('lineTo')) {
-            const [x, y] = cmd.match(/\d+/g).map(Number);
+            const [x, y] = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
             ctx.lineTo(x, y);
+        } else if (cmd.startsWith('bezierCurveTo')) {
+            const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
+            if (nums.length === 6) ctx.bezierCurveTo(...nums);
+        } else if (cmd.startsWith('arc')) {
+            const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
+            if (nums.length === 5) ctx.arc(nums[0], nums[1], nums[2], nums[3], nums[4]);
         } else if (cmd.startsWith('closePath')) {
             ctx.closePath();
         } else if (cmd.startsWith('fill')) {
@@ -254,7 +259,6 @@ function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 
     }
     next();
 }
-
 
 chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
