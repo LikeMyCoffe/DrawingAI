@@ -6,7 +6,6 @@ router.post('/', async (req, res) => {
   const prompt = req.body.prompt;
   if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
 
-  // Check if API key exists
   if (!process.env.GEMINI_API_KEY) {
     console.error('GEMINI_API_KEY is missing from environment variables');
     return res.status(500).json({ error: 'API key not configured' });
@@ -16,8 +15,10 @@ router.post('/', async (req, res) => {
 
   try {
     console.log('Making request to Gemini API...');
+    
+    // Try the v1 API instead of v1beta
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33,7 +34,6 @@ router.post('/', async (req, res) => {
     const data = await response.json();
     console.log('Response data:', JSON.stringify(data, null, 2));
 
-    // Check for API errors
     if (data.error) {
       console.error('Gemini API error:', data.error);
       return res.status(500).json({ error: 'Gemini API error: ' + data.error.message });
