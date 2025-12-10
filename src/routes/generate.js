@@ -14,11 +14,11 @@ router.post('/', async (req, res) => {
   const systemPrompt = buildSystemPrompt(prompt);
 
   try {
-    console.log('Making request to Gemini API...');
+    console.log('Making request to Gemini 2.5 Flash API...');
     
-    // Try the v1 API instead of v1beta
+    // Use Gemini 2.5 Flash with v1 API
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,7 +32,9 @@ router.post('/', async (req, res) => {
 
     console.log('Response status:', response.status);
     const data = await response.json();
-    console.log('Response data:', JSON.stringify(data, null, 2));
+    
+    // Only log first 200 chars to avoid spam
+    console.log('Response preview:', JSON.stringify(data, null, 2).substring(0, 200) + '...');
 
     if (data.error) {
       console.error('Gemini API error:', data.error);
@@ -45,7 +47,9 @@ router.post('/', async (req, res) => {
       return res.status(500).json({ error: 'No response from Gemini' });
     }
 
-    console.log('Successfully got response from Gemini');
+    console.log('Successfully got response from Gemini 2.5 Flash');
+    console.log('Response length:', text.length, 'characters');
+    
     res.json({
       message: "Here's how I'll draw it!",
       commands: text.split('\n').map(line => line.trim()).filter(Boolean)
