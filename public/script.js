@@ -10,6 +10,14 @@ const clearBtn = document.getElementById('clear-btn');
 const saveBtn = document.getElementById('save-btn');
 const uploadImgInput = document.getElementById('upload-img');
 
+const completionMessages = [
+    "✨ Drawing complete! What would you like me to draw next?",
+    "🎨 Finished! How do you like my artwork?",
+    "🖌️ All done! Ready for another creative challenge?",
+    "🎭 Masterpiece complete! What's your next request?",
+    "🌟 Drawing finished! I'm ready to create more art!"
+];
+
 let undoStack = [];
 let redoStack = [];
 const maxHistory = 20;
@@ -208,7 +216,7 @@ async function generateDrawing(prompt) {
 }
 
 // Animate a list of drawing commands step by step
-function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 5, delay = 5) {
+function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 5, delay = 5, onComplete = null) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = defaultColor;
     ctx.lineWidth = lineWidth;
@@ -216,7 +224,13 @@ function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 
     let i = 0;
 
     function next() {
-        if (i >= commands.length) return;
+        if (i >= commands.length) {
+            // Animation is complete - call the callback
+            if (onComplete && typeof onComplete === 'function') {
+                onComplete();
+            }
+            return;
+        }
         const cmd = commands[i].trim();
 
         if (cmd.startsWith('setStrokeStyle')) {
@@ -245,6 +259,7 @@ function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 
         } else if (cmd.startsWith('arc')) {
             const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
             if (nums.length === 5) ctx.arc(nums[0], nums[1], nums[2], nums[3], nums[4]);
+            else if (nums.length === 6) ctx.arc(nums[0], nums[1], nums[2], nums[3], nums[4], !!nums[5]);
         } else if (cmd.startsWith('closePath')) {
             ctx.closePath();
         } else if (cmd.startsWith('fill')) {
@@ -252,19 +267,11 @@ function animateDrawingCommands(commands, defaultColor = "#000000", lineWidth = 
         } else if (cmd.startsWith('stroke')) {
             ctx.stroke();
         } else if (cmd.startsWith('ellipse')) {
-          // ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle)
             const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
             if (nums.length === 7) ctx.ellipse(...nums);
-        }
-          else if (cmd.startsWith('quadraticCurveTo')) {
-          // quadraticCurveTo(cpx, cpy, x, y)
+        } else if (cmd.startsWith('quadraticCurveTo')) {
             const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
             if (nums.length === 4) ctx.quadraticCurveTo(...nums);
-        }
-          else if (cmd.startsWith('arc')) {
-            const nums = cmd.match(/-?\d+(\.\d+)?/g).map(Number);
-            if (nums.length === 5) ctx.arc(nums[0], nums[1], nums[2], nums[3], nums[4]);
-            else if (nums.length === 6) ctx.arc(nums[0], nums[1], nums[2], nums[3], nums[4], !!nums[5]);
         }
 
         i++;
@@ -292,12 +299,18 @@ sendChatBtn.addEventListener('click', async () => {
         const result = await generateDrawing(prompt);
         loadingMsg.innerHTML = `<b>AI:</b> ${result.message}`;
         if (result.commands) {
-            animateDrawingCommands(result.commands, currentColor, currentLineWidth, 150);
+            // Add completion callback
+            animateDrawingCommands(result.commands, currentColor, currentLineWidth, 150, () => {
+                const randomMessage = completionMessages[Math.floor(Math.random() * completionMessages.length)];
+                appendChatMessage('AI', randomMessage);
+            });
         }
     } catch (error) {
         loadingMsg.innerHTML = `<b>AI:</b> <span style="color: red">${error.message}</span>`;
     }
 });
+
+
 
 function appendChatMessage(sender, message) {
     const msgDiv = document.createElement('div');
