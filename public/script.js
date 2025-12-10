@@ -189,7 +189,6 @@ appendChatMessage('AI', 'Welcome to DrawingAI! Ask me to draw anything and watch
 const chatInput = document.getElementById('chat-input');
 const sendChatBtn = document.getElementById('send-chat');
 
-// Change this URL if you deploy your backend!
 const BACKEND_URL = '/api/generate';
 
 async function generateDrawing(prompt) {
