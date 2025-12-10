@@ -19,7 +19,7 @@ const generateRoute = require('./routes/generate');
 app.use('/api/generate', generateRoute);
 
 // Fallback: serve index.html for any unknown route (for SPA support)
-app.get('/*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
